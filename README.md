@@ -5,6 +5,9 @@ stay encrypted on disk and reach only the command that needs them.
 
     withkeys APP COMMAND [ARGUMENTS]
 
+Needs bash and gpg with its agent; git for profiles. [pass] adds the keys,
+and a pinentry unlocks the agent; withkeys itself calls neither.
+
 Keys live in `~/.password-store/withkeys/APP/VAR.gpg`; the first line of
 each is the value of VAR. Add one with:
 
