@@ -29,13 +29,13 @@ withkeys takes APP's keys from `withkeys/APP/NAME/` when it exists, else
 from `withkeys/APP/`. For example:
 
     ~/.password-store/withkeys/
-    ├── rv/
+    ├── my-fancy-harness/
     │   └── ANTHROPIC_API_KEY.gpg
     └── memex-gerrit/
         ├── GERRIT_USER.gpg          keys outside any profile
         ├── GERRIT_PASSWORD.gpg
-        └── lustre/
-            ├── GERRIT_USER.gpg      keys of profile lustre
+        └── work/
+            ├── GERRIT_USER.gpg      keys of profile work
             └── GERRIT_PASSWORD.gpg
 
 ## Unlocking
