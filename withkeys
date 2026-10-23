@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# withkeys: run a command with API keys from pass(1).
+#
+# Keys live in ~/.password-store/withkeys/<app>/<VAR>.gpg, the first line
+# of each file is the value of environment variable <VAR>.
+#
+# The agent must be unlocked beforehand (gpg-unlock), withkeys never prompts.
+#
+
+set -e
+
+SELF=$(realpath "${BASH_SOURCE[0]}")
+APP=$(basename "$SELF")
+EXEC=$(basename "$0")
+STORE=~/.password-store/$APP
+
+die() {
+    echo "$APP: $*" >&2
+    exit 1
+}
+
+usage() {
+cat << EOF
+Usage: $APP <app> <command> [args...]
+       <app> [args...]
+
+The second form is used when $APP is invoked via a symlink named <app>,
+e.g. ~/.local/shims/<app>. The real <app> is looked up in PATH without
+the shim directory.
+EOF
+}
+
+load_keys() {
+    local key
+    local var
+    local val
+    [ -d "$STORE/$1" ] || die "No keys for $1 in $STORE/$1"
+    for key in "$STORE/$1"/*.gpg; do
+        [ -e "$key" ] || continue
+        var=$(basename "$key" .gpg)
+        val=$(gpg -qd --pinentry-mode=error "$key") || die "Can't decrypt $key, run gpg-unlock"
+        export "$var=$(head -1 <<< "$val")"
+    done
+}
+
+if [ "$EXEC" == "$APP" ]; then
+    if [ "$1" == "-h" -o "$1" == "--help" ]; then
+        usage
+        exit 0
+    fi
+    if [ $# -lt 2 ]; then
+        usage
+        exit 1
+    fi
+    load_keys "$1"
+    shift
+    exec "$@"
+fi
+
+SEARCH_PATH=$(sed "s|$(dirname "$0"):||" <<< "$PATH")
+REAL=$(PATH=$SEARCH_PATH command -v "$EXEC") || die "Can't find $EXEC in PATH"
+load_keys "$EXEC"
+exec -a "$EXEC" "$REAL" "$@"
