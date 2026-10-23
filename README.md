@@ -27,4 +27,11 @@ from `withkeys/APP/`.
 
 withkeys never prompts: unlock the gpg agent beforehand.
 
+## Related
+
+- [hunch]: the human, their editor and agents working together
+- [memex]: a project's review threads, issues and CI results in one format
+
+[hunch]: https://github.com/roolebo/hunch
+[memex]: https://github.com/roolebo/memex
 [pass]: https://www.passwordstore.org/
