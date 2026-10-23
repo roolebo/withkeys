@@ -37,8 +37,11 @@ from `withkeys/APP/`. For example:
 
 ## Unlocking
 
-withkeys never prompts: unlock the gpg agent beforehand. One way, in
-`~/.zshrc` or `~/.bashrc`:
+withkeys never prompts: it runs gpg with `--pinentry-mode=error`, so
+only what the gpg agent has cached decrypts. Fill the cache beforehand by
+decrypting anything once: typing the passphrase, a pinentry that takes it
+from a desktop keyring, a hardware key's PIN. The helper below is one way,
+in `~/.zshrc` or `~/.bashrc`:
 
     export GPG_TTY=$(tty)
 
