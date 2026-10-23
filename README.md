@@ -1,4 +1,4 @@
-# withkeys
+# withkeys: Your keys without headache
 
 Runs a command with API keys from [pass], as environment variables. Keys
 stay encrypted on disk and reach only the command that needs them.
