@@ -23,9 +23,44 @@ Projects can have their own keys. In a git working copy with a profile:
     git config withkeys.profile NAME
 
 withkeys takes APP's keys from `withkeys/APP/NAME/` when it exists, else
-from `withkeys/APP/`.
+from `withkeys/APP/`. For example:
 
-withkeys never prompts: unlock the gpg agent beforehand.
+    ~/.password-store/withkeys/
+    ├── rv/
+    │   └── ANTHROPIC_API_KEY.gpg
+    └── memex-gerrit/
+        ├── GERRIT_USER.gpg          keys outside any profile
+        ├── GERRIT_PASSWORD.gpg
+        └── lustre/
+            ├── GERRIT_USER.gpg      keys of profile lustre
+            └── GERRIT_PASSWORD.gpg
+
+## Unlocking
+
+withkeys never prompts: unlock the gpg agent beforehand. One way, in
+`~/.zshrc` or `~/.bashrc`:
+
+    export GPG_TTY=$(tty)
+
+    gpg-unlock() {
+        gpg-connect-agent updatestartuptty /bye > /dev/null
+        gpg -qd ~/.local/share/gpg-unlock.gpg > /dev/null
+    }
+
+    gpg-lock() {
+        gpg-connect-agent reloadagent /bye > /dev/null
+    }
+
+`gpg-unlock` decrypts a file made once for this, which asks for the
+passphrase and leaves it cached in the agent:
+
+    echo unlock | gpg -e -r "$(cat ~/.password-store/.gpg-id)" \
+        -o ~/.local/share/gpg-unlock.gpg
+
+The agent keeps it as long as `~/.gnupg/gpg-agent.conf` says, e.g. a day:
+
+    default-cache-ttl 86400
+    max-cache-ttl 86400
 
 ## Related
 
