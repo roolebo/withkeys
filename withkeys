@@ -3,7 +3,9 @@
 # withkeys: run a command with API keys from pass(1).
 #
 # Keys live in ~/.password-store/withkeys/<app>/<VAR>.gpg, the first line
-# of each file is the value of environment variable <VAR>.
+# of each file is the value of environment variable <VAR>. In a git working
+# copy with withkeys.profile set, <app>/<profile>/ comes first, so each
+# project can have its own keys.
 #
 # The agent must be unlocked beforehand (gpg-unlock), withkeys never prompts.
 #
@@ -32,11 +34,16 @@ EOF
 }
 
 load_keys() {
+    local dir=$STORE/$1
+    local profile
     local key
     local var
     local val
-    [ -d "$STORE/$1" ] || die "No keys for $1 in $STORE/$1"
-    for key in "$STORE/$1"/*.gpg; do
+    profile=$(git config withkeys.profile 2> /dev/null) || true
+    # Apps without keys for the profile keep their own
+    [ -n "$profile" -a -d "$dir/$profile" ] && dir=$dir/$profile
+    [ -d "$dir" ] || die "No keys for $1 in $dir"
+    for key in "$dir"/*.gpg; do
         [ -e "$key" ] || continue
         var=$(basename "$key" .gpg)
         val=$(gpg -qd --pinentry-mode=error "$key") || die "Can't decrypt $key, run gpg-unlock"
