@@ -62,6 +62,8 @@ The agent keeps it as long as `~/.gnupg/gpg-agent.conf` says, e.g. a day:
     default-cache-ttl 86400
     max-cache-ttl 86400
 
+[skills/withkeys](skills/withkeys/SKILL.md) tells an agent how to use it.
+
 ## Related
 
 - [hunch]: the human, their editor and agents working together
