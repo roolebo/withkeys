@@ -7,7 +7,7 @@
 # copy with withkeys.profile set, <app>/<profile>/ comes first, so each
 # project can have its own keys.
 #
-# The agent must be unlocked beforehand (gpg-unlock), withkeys never prompts.
+# The gpg agent must be unlocked beforehand; withkeys never prompts.
 #
 
 set -e
@@ -46,7 +46,7 @@ load_keys() {
     for key in "$dir"/*.gpg; do
         [ -e "$key" ] || continue
         var=$(basename "$key" .gpg)
-        val=$(gpg -qd --pinentry-mode=error "$key") || die "Can't decrypt $key, run gpg-unlock"
+        val=$(gpg -qd --pinentry-mode=error "$key") || die "Can't decrypt $key: unlock the gpg agent"
         export "$var=$(head -1 <<< "$val")"
     done
 }
